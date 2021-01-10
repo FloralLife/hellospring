@@ -1,21 +1,59 @@
 package FloralLife.hellospring;
 
-import FloralLife.hellospring.repository.MemberRepository;
-import FloralLife.hellospring.repository.MemoryMemberRepository;
+import FloralLife.hellospring.aop.TimeTraceAop;
+import FloralLife.hellospring.repository.*;
 import FloralLife.hellospring.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SpringConfig {
 
-    @Bean
-    public MemberService memberService(){
-        return new MemberService(memberRepository());
+/*
+* jdbc
+*
+    private DataSource dataSource;
+
+    @Autowired
+    public SpringConfig(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+*/
+
+/*
+* JPA
+    private EntityManager em;
+
+    @Autowired
+    public SpringConfig(EntityManager em) {
+        this.em = em;
+    }
+*/
+
+    private final MemberRepository memberRepository;
+
+    @Autowired
+    public SpringConfig(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     @Bean
-    public MemberRepository memberRepository(){
-        return new MemoryMemberRepository();
+    public MemberService memberService(){
+        return new MemberService(memberRepository);
     }
+
+    @Bean
+    public TimeTraceAop timeTraceAop() {
+        return new TimeTraceAop();
+    }
+
+//    @Bean
+//    public MemberRepository memberRepository(){
+//        return new MemoryMemberRepository();
+//        return new JdbcMemberRepository(dataSource);
+//        return new JdbcTemplateMemberRepository(dataSource);
+//        return new JpaMemberRepository(em);
+//
+//    }
 }
